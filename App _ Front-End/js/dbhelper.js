@@ -9,10 +9,10 @@ class DBHelper {
    */
   static get DATABASE_URL() {
     const port = 1337 // Change this to your server port
-    return `http://localhost:${port}/restaurants`;
+    return `http://localhost:${port}`;
   }
 
-  static createIDBStore(restaurants) {
+  static createRestaurantsStore(restaurants) {
     // Get compatible indexeddb
     var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
 
@@ -22,8 +22,11 @@ class DBHelper {
     // Create the schema
     open.onupgradeneeded = function() {
       var db = open.result;
-      var store = db.createObjectStore("RestaurantStore", { keyPath: "id" });
-      var index = store.createIndex("by-id", "id");
+      db.createObjectStore("RestaurantStore", { keyPath: "id" });
+      restaurants.forEach(function(restaurant) {
+      db.createObjectStore("ReviewsStore-" + restaurant.id, { keyPath: "id" });
+      });
+
     };
 
     open.onerror = function(err) {
@@ -35,7 +38,6 @@ class DBHelper {
       var db = open.result;
       var tx = db.transaction("RestaurantStore", "readwrite");
       var store = tx.objectStore("RestaurantStore");
-      var index = store.index("by-id");
 
       // Add restaurant data
       restaurants.forEach(function(restaurant) {
@@ -43,6 +45,43 @@ class DBHelper {
       });
 
       // Close the database when transaction is done
+      tx.oncomplete = function() {
+        db.close();
+      };
+    }
+  }
+
+  // Create IDB for Reviews
+  static createReviewsStore(restaurantId, reviews) {
+    // Get the compatible IndexedDB version
+    var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
+
+    // Open (or create) the database
+    var open = indexedDB.open("RestaurantDB", 1);
+
+    // Create the schema
+    open.onupgradeneeded = function() {
+      var db = open.result;
+      db.createObjectStore("ReviewsStore-" + restaurantId, { keyPath: "id" });
+    };
+
+
+    open.onerror = function(err) {
+      console.error("Something went wrong with IndexDB: " + err.target.errorCode);
+    }
+
+    open.onsuccess = function() {
+      // Start a new transaction
+      var db = open.result;
+      var tx = db.transaction("ReviewsStore-" + restaurantId, "readwrite");
+      var store = tx.objectStore("ReviewsStore-" + restaurantId);
+
+      // Add the restaurant data
+      reviews.forEach(function(review) {
+        store.put(review);
+      });
+
+      // Close the db when the transaction is done
       tx.oncomplete = function() {
         db.close();
       };
@@ -79,30 +118,58 @@ class DBHelper {
    */
    static fetchRestaurants(callback) {
      if (navigator.onLine) {
-       let xhr = new XMLHttpRequest();
-       xhr.open('GET', DBHelper.DATABASE_URL);
-       xhr.onload = () => {
-         if (xhr.status === 200) { //if a success response from server!!
-           const restaurants = JSON.parse(xhr.responseText);
-           DBHelper.createIDBStore(restaurants); // cache restaurants..
+       fetch(`${DBHelper.DATABASE_URL}/restaurants`)
+         .then(res => res.json())
+         .then(restaurants => {
+           DBHelper.createRestaurantsStore(restaurants); // Cache restaurants
            callback(null, restaurants);
-         } else {  // if an error shows from server!!
-           const error = (`REQUEST FAILED!!! Returned status of ${xhr.status}`);
+         })
+         .catch(err => {
+           const error = `Request failed. Returned status of ${err.status}`;
            callback(error, null);
-         }
-       };
-       xhr.send();
+         })
      } else {
-       console.log('Offline using Cached data!');
+       console.log('Browser Offline - Using cached data!');
        DBHelper.getCachedData((error, restaurants) => {
          if (restaurants.length > 0) {
-           console.log('Unable to fetch data from server!!!');
            callback(null, restaurants);
          }
        });
      }
    }
 
+    /**
+     * Fetch all reviews.
+     */
+   static fetchReviews(callback) {
+     const url = DBHelper.DATABASE_URL + '/reviews';
+     fetch(url)
+      .then(res => res.json())
+      .then(reviews => {
+        callback(null, reviews);
+      })
+      .catch(err => {
+        const error = `Request failed. Returned status of ${err.status}`;
+        callback(error, null);
+      })
+  }
+
+  /**
+   * Fetch reviews by id.
+   */
+  static fetchReviewsByRestaurantId(id, callback) {
+    const url = DBHelper.DATABASE_URL + '/reviews/?restaurant_id=' + id;
+     fetch(url)
+      .then(res => res.json())
+      .then(review => {
+          DBHelper.createReviewsStore(id, reviews);
+        callback(null, review);
+      })
+      .catch(err => {
+        const error = `Request failed. Returned status of ${err.status}`;
+        callback(error, null);
+      })
+  }
   /**
    * Fetch a restaurant by its ID.
    */
