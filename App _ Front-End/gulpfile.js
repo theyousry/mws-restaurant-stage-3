@@ -14,10 +14,9 @@ const babel = require('gulp-babel');
   });
 
   gulp.task('js', () => {
-    return gulp.src(['js/main.js','js/dbhelper.js'])
+    return gulp.src('js/*.js')
       .pipe(babel({ presets: ['env'] }))
-      .pipe(concat('bundle.js'))
-      .pipe(rename('bundle.min.js'))
+      .pipe(rename({ suffix: '.min' }))
       .pipe(uglify())
       .pipe(gulp.dest('dist'));
 });
