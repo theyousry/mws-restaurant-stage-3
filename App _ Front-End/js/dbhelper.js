@@ -116,34 +116,34 @@ class DBHelper {
   /**
    * Fetch all restaurants.
    */
-   static fetchRestaurants(callback) {
-     if (navigator.onLine) {
-       fetch(`${DBHelper.DATABASE_URL}/restaurants`)
-         .then(res => res.json())
-         .then(restaurants => {
-           DBHelper.createRestaurantsStore(restaurants); // Cache restaurants
-           callback(null, restaurants);
-         })
-         .catch(err => {
-           const error = `Request failed. Returned status of ${err.status}`;
-           callback(error, null);
-         })
-     } else {
-       console.log('Browser Offline - Using cached data!');
-       DBHelper.getCachedData((error, restaurants) => {
-         if (restaurants.length > 0) {
-           callback(null, restaurants);
-         }
-       });
-     }
-   }
+  static fetchRestaurants(callback) {
+    if (navigator.onLine) {
+      fetch(`${DBHelper.DATABASE_URL}/restaurants`)
+        .then(res => res.json())
+        .then(restaurants => {
+          DBHelper.createRestaurantsStore(restaurants); // Cache restaurants
+          callback(null, restaurants);
+        })
+        .catch(err => {
+          const error = `Request failed. Returned status of ${err.status}`;
+          callback(error, null);
+        })
+    } else {
+      console.log('Browser Offline - Using cached data!');
+      DBHelper.getCachedData((error, restaurants) => {
+        if (restaurants.length > 0) {
+          callback(null, restaurants);
+        }
+      });
+    }
+  }
 
-    /**
-     * Fetch all reviews.
-     */
-   static fetchReviews(callback) {
-     const url = DBHelper.DATABASE_URL + '/reviews';
-     fetch(url)
+  /**
+   * Fetch all reviews.
+   */
+  static fetchReviews(callback) {
+    const url = DBHelper.DATABASE_URL + '/reviews';
+    fetch(url)
       .then(res => res.json())
       .then(reviews => {
         callback(null, reviews);
@@ -159,17 +159,28 @@ class DBHelper {
    */
   static fetchReviewsByRestaurantId(id, callback) {
     const url = DBHelper.DATABASE_URL + '/reviews/?restaurant_id=' + id;
-     fetch(url)
+    fetch(url)
       .then(res => res.json())
-      .then(review => {
-          DBHelper.createReviewsStore(id, reviews);
-        callback(null, review);
+      .then(reviews => {
+        reviews = reviews.sort(function(a, b) {
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+        DBHelper.createReviewsStore(id, reviews);
+        callback(null, reviews);
       })
       .catch(err => {
         const error = `Request failed. Returned status of ${err.status}`;
         callback(error, null);
       })
   }
+
+  static addRestaurantToFavorites(restaurantId, isFav, callback) {
+    const url = DBHelper.DATABASE_URL + '/restaurants/' + restaurantId + '/?is_favorite=' + isFav;
+    fetch(url, { method: 'put' })
+      .then(res => callback(null, 1))
+      .catch(err => callback(err, null));
+  }
+
   /**
    * Fetch a restaurant by its ID.
    */
@@ -289,7 +300,7 @@ class DBHelper {
    * Restaurant image URL.
    */
   static imageUrlForRestaurant(restaurant) {
-    return (`/img/${restaurant.photograph}.jpg`);
+    return (`./dist/img/${restaurant.photograph}.webp`);
   }
 
   /**
@@ -309,7 +320,7 @@ class DBHelper {
 }
 
 // Register Service Worker for Offline Availability.
-registerServiceWorker = () => {
+const registerServiceWorker = () => {
   if (navigator.serviceWorker) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('sw.js')

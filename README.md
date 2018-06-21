@@ -4,7 +4,7 @@
 
 ## Project Overview: Stage 3
 
-For the **Restaurant Reviews** projects, you will incrementally convert a static webpage to a mobile-ready web application. In **Stage Three**, you will take the connected application you yu built in Stage One and Stage Two and add additional functionality. You will add a form to allow users to create their own reviews. If the app is offline, your form will defer updating to the remote database until a connection is established. Finally, you’ll work to optimize your site to meet even stricter performance benchmarks than the previous project, and test again using **Lighthouse**.
+For the **Restaurant Reviews** projects, you will incrementally convert a static webpage to a mobile-ready web application. In **Stage Three**, you will take the connected application you built in Stage One and Stage Two and add additional functionality. You will add a form to allow users to create their own reviews. If the app is offline, your form will defer updating to the remote database until a connection is established. Finally, you’ll work to optimize your site to meet even stricter performance benchmarks than the previous project, and test again using **Lighthouse**.
 
 ## Specification
 
@@ -25,8 +25,8 @@ Now that you’ve connected your application to an external database, it’s tim
 **Meet the new performance requirements:** In addition to adding new features, the performance targets you met in **Stage Two** have tightened. Using Lighthouse, you’ll need to measure your site performance against the new targets.
 
 * Progressive Web App score should be at **90** or better.
-* Performance score should be at 90 or better.
-* Accessibility score should be at 90 or better.
+* Performance score should be at **90** or better.
+* Accessibility score should be at **90** or better.
 
 ## Getting Started
 
@@ -46,7 +46,7 @@ Now that you’ve connected your application to an external database, it’s tim
 `(or some other port, if port 8000 is already in use.)`
 ##### For Python 3.x, you can use
 ```
-# python3 -m http.server 8000
+# python -m http.server 8000
 ```
 ##### If you don't have Python installed, navigate to Python's[website](https://www.python.org/)
 `to download and install the software.`

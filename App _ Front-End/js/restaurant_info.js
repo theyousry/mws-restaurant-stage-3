@@ -14,6 +14,12 @@ window.initMap = () => {
         center: restaurant.latlng,
         scrollwheel: false
       });
+      const theMap = document.getElementById('map');
+
+      self.map.addListener('tilesloaded', function () {
+        theMap.querySelectorAll('img').forEach(value => value.alt = "Google Maps Image");
+      });
+
       fillBreadcrumb();
       DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
     }
@@ -23,7 +29,7 @@ window.initMap = () => {
 /**
  * Get current restaurant from page URL.
  */
- const fetchRestaurantFromURL = (callback) => {
+const fetchRestaurantFromURL = (callback) => {
   if (self.restaurant) { // restaurant already fetched!
     callback(null, self.restaurant)
     return;
@@ -76,14 +82,43 @@ const fillRestaurantHTML = (restaurant = self.restaurant) => {
   const name = document.getElementById('restaurant-name');
   name.innerHTML = restaurant.name;
 
+  const favoriteIcon = document.createElement('span');
+  favoriteIcon.className = 'restaurant-fav';
+
+  const favoriteIconImg = document.createElement('img');
+  if (restaurant.is_favorite === "true") {
+    favoriteIconImg.alt = 'Favorited ' + restaurant.name;
+    favoriteIconImg.setAttribute("data-src", './dist/img/ico-fav.png');
+    favoriteIconImg.className = 'restaurant-fav-icon fav';
+  } else {
+    favoriteIconImg.setAttribute("data-src", './dist/img/ico-fav-o.png');
+    favoriteIconImg.className = 'restaurant-fav-icon fav-not';
+  }
+
+  favoriteIconImg.addEventListener('click', () => {
+    const src = favoriteIconImg.src;
+    if (src.includes('dist/img/ico-fav-o.png')) {
+      DBHelper.addRestaurantToFavorites(restaurant.id, true, (err, res) => {
+        favoriteIconImg.src = './dist/img/ico-fav.png';
+      });
+    } else {
+      DBHelper.addRestaurantToFavorites(restaurant.id, false, (err, res) => {
+        favoriteIconImg.src = './dist/img/ico-fav-o.png';
+      });
+    }
+  })
+
+  favoriteIcon.append(favoriteIconImg);
+  name.prepend(favoriteIcon);
+
   const address = document.getElementById('restaurant-address');
   address.innerHTML = restaurant.address;
   address.setAttribute("role", "address");
 
   const image = document.getElementById('restaurant-img');
   image.className = 'restaurant-img'
-  image.src = DBHelper.imageUrlForRestaurant(restaurant);
-  image.alt = restaurant.name + ' Restaurant';
+  image.setAttribute("data-src", DBHelper.imageUrlForRestaurant(restaurant));
+  image.alt = restaurant.name + ' Restaurant Image';
 
   const cuisine = document.getElementById('restaurant-cuisine');
   cuisine.innerHTML = restaurant.cuisine_type;
@@ -125,9 +160,6 @@ const fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hour
  */
 const fillReviewsHTML = (reviews = self.reviews) => {
   const container = document.getElementById('reviews-container');
-  const title = document.createElement('h3');
-  title.innerHTML = 'Reviews';
-  container.appendChild(title);
 
   if (!reviews) {
     const noReviews = document.createElement('p');
@@ -179,7 +211,7 @@ const fillBreadcrumb = (restaurant=self.restaurant) => {
   const breadcrumb = document.getElementById('breadcrumb');
   const li = document.createElement('li');
   li.innerHTML = restaurant.name;
-  li.setAttribute('aria-current', 'page');
+  li.setAttribute("class", "rating" );
   breadcrumb.appendChild(li);
 }
 
@@ -197,4 +229,33 @@ const getParameterByName = (name, url) => {
   if (!results[2])
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
+const reviewRestaurant = (restaurant = self.restaurant) => {
+  let id = restaurant.id;
+  let name = document.getElementById("review-name").value;
+  let rating = document.getElementById("review-rating").value;
+  let message = document.getElementById("review-comment").value;
+
+  if (name != "" && message != "") {
+    let review = {
+      restaurant_id: id,
+      name: name,
+      rating: rating,
+      comments: message,
+    }
+
+    fetch(`${DBHelper.DATABASE_URL}/reviews`, {
+      method: 'post',
+      body: JSON.stringify(review)
+    })
+    .then(res => res.json())
+    .catch(error => {
+      console.log('Something went wrong submitting your review');
+    });
+
+    window.location.reload();
+  }
+
+  return false;
 }

@@ -6,17 +6,22 @@
   "dependencies": {
     "babel-core": "^6.26.0",
     "babel-preset-env": "^1.6.1",
+    "browser-sync": "^2.24.4",
+    "compression": "^1.7.2",
     "gulp-babel": "^7.0.1",
     "gulp-clean-css": "^3.9.3",
     "gulp-cli": "^2.0.1",
     "gulp-concat": "^2.6.1",
     "gulp-rename": "^1.2.2",
     "gulp-uglify": "^3.0.0",
+    "gulp-uglify-js": "0.0.4",
     "optimist": "^0.6.1",
     "option": "^0.2.4"
   },
   "devDependencies": {
-    "gulp": "^4.0.0"
+    "gulp": "github:gulpjs/gulp#v4.0.0-alpha.3",
+    "gulp-imagemin": "^4.1.0",
+    "gulp-jsmin": "^0.1.5"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
