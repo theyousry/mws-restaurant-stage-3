@@ -30,31 +30,6 @@ Now that you’ve connected your application to an external database, it’s tim
 
 ## Getting Started
 
-### Run the App
-##### Navigate into Front-End directory
-```
-# cd App _ Front-End
-```
-##### In a terminal, check the version of Python you have:
-```
-# python -V
-```
-##### If you have Python 2.x spin up the server with
-```
-# python -m SimpleHTTPServer 8000
-```
-`(or some other port, if port 8000 is already in use.)`
-##### For Python 3.x, you can use
-```
-# python -m http.server 8000
-```
-##### If you don't have Python installed, navigate to Python's[website](https://www.python.org/)
-`to download and install the software.`
-
-##### With your server running, visit the site:
-```
-http://localhost:8000
-```
 ### Development local API Server
 _Location of server = /server_
 Server depends on [node.js LTS Version: v6.11.2 ](https://nodejs.org/en/download/), [npm](https://www.npmjs.com/get-npm), and [sails.js](http://sailsjs.com/)
@@ -70,17 +45,35 @@ Let's start with running commands in your terminal, known as command line interf
 # cd Server _ Back-End
 ```
 ###### Install project dependancies
-```Install project dependancies
+```
 # npm i
 ```
 ###### Install Sails.js globally
-```Install sails global
+```
 # npm i sails -g
 ```
 ###### Start the server
-```Start server
+```
 # node server
 ```
 ### You should now have access to your API server environment
 debug: Environment : development
 debug: Port        : 1337
+
+### Run the App
+##### Navigate into Front-End directory
+```
+# cd App _ Front-End
+```
+##### Install Gulp
+```
+# npm install gulp-cli -g
+```
+##### Install dependencies
+```
+# npm install
+```
+##### Start the app in browser
+```
+# gulp
+```

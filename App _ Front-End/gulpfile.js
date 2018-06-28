@@ -7,6 +7,7 @@ const jsmin = require('gulp-jsmin');
 const imagemin = require('gulp-imagemin');
 const babel = require('gulp-babel');
 const browserSync = require('browser-sync').create();
+const compress = require('compression');
 
 gulp.task('css', () => {
   return gulp.src(['css/styles.css', 'css/responsive.css'])
@@ -33,4 +34,22 @@ gulp.task('img', () => {
     .pipe(gulp.dest('dist/img/'));
 });
 
-gulp.task('default', [ 'css', 'js', 'img' ]);
+gulp.task('build', [ 'css', 'js', 'img' ]);
+
+gulp.task('serve', function() {
+  browserSync.init({
+    server: {
+      baseDir: './',
+      middleware: [ compress() ]
+    },
+  })
+});
+
+gulp.task('watch', ['serve'], function () {
+  gulp.watch('css/*.css', ['css']);
+  gulp.watch('dist/css/*.min.css', ['css']);
+  gulp.watch('js/*.js', ['js']);
+  gulp.watch('*.html', browserSync.reload);
+});
+
+gulp.task('default', ['watch']);

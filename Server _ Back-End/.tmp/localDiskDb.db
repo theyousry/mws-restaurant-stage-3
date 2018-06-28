@@ -45,8 +45,8 @@
           "Sunday": "12:00 pm - 3:00 pm, 5:00 pm - 11:00 pm"
         },
         "createdAt": 1504095568414,
-        "updatedAt": "2017-09-14T14:05:54.800Z",
-        "is_favorite": false,
+        "updatedAt": "2018-06-28T20:58:30.087Z",
+        "is_favorite": "false",
         "id": 2
       },
       {
@@ -140,7 +140,7 @@
           "Sunday": "12:00 pm - 9:00 pm"
         },
         "createdAt": 1504095567071,
-        "updatedAt": "2018-06-11T05:12:52.056Z",
+        "updatedAt": "2018-06-21T07:15:43.227Z",
         "is_favorite": "false",
         "id": 6
       },
@@ -188,7 +188,7 @@
           "Sunday": "10:00 am - 3:00 pm, 5:30 pm - 11:00 pm"
         },
         "createdAt": 1504095567091,
-        "updatedAt": "2018-06-21T04:05:43.827Z",
+        "updatedAt": "2018-06-28T19:40:19.951Z",
         "is_favorite": "false",
         "id": 8
       },
@@ -236,7 +236,7 @@
           "Sunday": "11:00 am - 12:00 am"
         },
         "createdAt": 1504095567183,
-        "updatedAt": "2018-06-21T06:49:27.577Z",
+        "updatedAt": "2018-06-21T07:15:52.745Z",
         "is_favorite": "false",
         "id": 10
       }
@@ -556,6 +556,15 @@
         "createdAt": "2018-06-21T05:19:11.341Z",
         "updatedAt": "2018-06-21T05:19:11.341Z",
         "id": 35
+      },
+      {
+        "restaurant_id": 1,
+        "name": "jjj",
+        "rating": "2",
+        "comments": "trujry",
+        "createdAt": "2018-06-28T19:40:40.728Z",
+        "updatedAt": "2018-06-28T19:40:40.728Z",
+        "id": 36
       }
     ]
   },
@@ -611,7 +620,7 @@
       "id": 10
     },
     "reviews": {
-      "id": 35
+      "id": 36
     }
   }
 }

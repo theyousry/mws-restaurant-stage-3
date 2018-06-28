@@ -32,16 +32,3 @@ self.addEventListener('fetch', function(event) {
     })
   );
 });
-
-self.addEventListener('fetch', function(event) {
-  event.respondWith(
-    fetch(event.request).then(function(response) {
-      if (response.status==404) {
-        return new Response("Not Found!!");
-      }
-      return response;
-    }).cache(function() {
-    return new Response("That's Totally Failed!");
-        })
-  );
-});

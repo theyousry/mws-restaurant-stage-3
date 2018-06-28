@@ -87,7 +87,7 @@ const fillRestaurantHTML = (restaurant = self.restaurant) => {
 
   const favoriteIconImg = document.createElement('img');
   if (restaurant.is_favorite === "true") {
-    favoriteIconImg.alt = 'Favorited ' + restaurant.name;
+    favoriteIconImg.alt = 'Restaurant Favorited ' + restaurant.name;
     favoriteIconImg.setAttribute("data-src", './dist/img/ico-fav.png');
     favoriteIconImg.className = 'restaurant-fav-icon fav';
   } else {
