@@ -6,11 +6,23 @@ const cleanCSS = require('gulp-clean-css');
 const jsmin = require('gulp-jsmin');
 const imagemin = require('gulp-imagemin');
 const babel = require('gulp-babel');
+const purgecss = require('gulp-purgecss')
 const browserSync = require('browser-sync').create();
 const compress = require('compression');
 
+gulp.task('purgecss', () => {
+  return gulp
+    .src('css/*.css')
+    .pipe(
+      purgecss({
+        content: ['*.html','js/*.js']
+      })
+    )
+    .pipe(gulp.dest('build/css'))
+})
+
 gulp.task('css', () => {
-  return gulp.src(['css/styles.css', 'css/responsive.css'])
+  return gulp.src(['build/css/styles.css', 'build/css/responsive.css'])
     .pipe(cleanCSS({ level: 2 }))
     .pipe(concat('bundle.css'))
     .pipe(rename('bundle.min.css'))
@@ -34,7 +46,7 @@ gulp.task('img', () => {
     .pipe(gulp.dest('dist/img/'));
 });
 
-gulp.task('build', [ 'css', 'js', 'img' ]);
+// gulp.task('build', [ 'purgecss', 'css', 'js', 'img' ]);
 
 gulp.task('serve', function() {
   browserSync.init({

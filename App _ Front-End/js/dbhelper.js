@@ -320,12 +320,21 @@ class DBHelper {
 }
 
 // Register Service Worker for Offline Availability.
-const registerServiceWorker = () => {
-  if (navigator.serviceWorker) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js')
-  .then(registration => console.log('Registeration Worked With Scope: ', registration.scope))
-  .catch(err => console.log('REGISTERATION FAILED: ', err));
-})
-}
-}
+document.addEventListener('DOMContentLoaded', (event) => {
+    if (navigator.serviceWorker) {
+        navigator.serviceWorker.register('sw.js')
+            .then(reg => console.log(`Registeration Worked With Scope: ${reg.scope}`))
+            .catch(err => console.error(`REGISTERATION FAILED: ${err}`));
+    }
+    DBHelper.fetchNeighborhoods()
+        .then(neighborhoods => fillNeighborhoodsHTML(neighborhoods));
+
+    DBHelper.fetchCuisines()
+        .then(cuisines => fillCuisinesHTML(cuisines));
+
+    if (!navigator.onLine) {
+        updateRestaurants();
+        DBHelper.fetchRestaurantById(DBHelper.getParameterByName('id'))
+        .then(restaurant => initMap(restaurant));
+    }
+});
