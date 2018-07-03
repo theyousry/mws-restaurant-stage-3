@@ -46,7 +46,7 @@ gulp.task('img', () => {
     .pipe(gulp.dest('dist/img/'));
 });
 
-// gulp.task('build', [ 'purgecss', 'css', 'js', 'img' ]);
+gulp.task('build', [ 'purgecss', 'css', 'js', 'img' ]);
 
 gulp.task('serve', function() {
   browserSync.init({
